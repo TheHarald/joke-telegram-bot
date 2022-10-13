@@ -1,0 +1,47 @@
+version: "3.9"
+services:
+  joke-bot-db:
+    build: ./src/sequelize
+    restart: always
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-psecret",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./src/sequelize:/app
+    networks:
+      - joke-bot-network
+    environment:
+      - MYSQL_DATABASE=${DATABASE}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+
+  joke-bot:
+    build: .
+    restart: always
+    environment:
+      TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
+    ports:
+      - "3001:3002"
+    networks:
+      - joke-bot-network
+    depends_on:
+      joke-bot-db:
+        condition: service_healthy
+
+networks:
+  joke-bot-network:
+    driver: bridge
+
+volumes:
+  joke-bot-db-data:
