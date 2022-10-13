@@ -37,7 +37,7 @@ export function startBot() {
 
     bot.onText(jokeCommand, async (msg: Message) => {
 
-        connection.query('SELECT id, cat, CAST(CONVERT(text USING LATIN1) AS BINARY) USING UTF8) AS text FROM anek ORDER BY RAND() LIMIT 1', (err, rows) => {
+        connection.query('SELECT id, cat, CONVERT(CAST(CONVERT(text USING LATIN1) AS BINARY) USING UTF8) AS text FROM anek ORDER BY RAND() LIMIT 1', (err, rows) => {
             if (err) {
                 console.log('error-> ', err);
             }
@@ -47,6 +47,15 @@ export function startBot() {
 
     });
 
+    bot.onText(/\/count/, async (msg: Message) => {
+        connection.query('SELECT COUNT(*) FROM anek', (err, rows) => {
+            if (err) {
+                console.log('error-> ', err);
+            }
+            console.log('count-> ', rows);
+            bot.sendMessage(msg.chat.id, rows[0]['COUNT(*)']);
+        });
+    });
 
 }
 
