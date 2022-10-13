@@ -4,12 +4,13 @@ import * as dotenv from 'dotenv';
 dotenv.config()
 
 
-const app:Express = express();
+const app: Express = express();
 app.use(express.static('static'))
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.send(`${process.env.DATABASE}`);}
+    res.send('API page work');
+}
 );
 
 startBot();
